@@ -929,11 +929,12 @@ select:focus {
 .a4-page.template-modern {
     border-left: 15mm solid var(--accent-blue);
     padding-left: 15mm;
+    padding-right: 15mm;
+    /* Added to balance left padding */
 }
 
 .template-modern .preview-title h2 {
-    text-align: left;
-    margin-left: 0;
+    text-align: center;
     width: 100%;
 }
 
@@ -943,8 +944,9 @@ select:focus {
 }
 
 .template-modern .preview-logo {
-    margin-left: 0;
-    align-self: flex-start;
+    align-self: center;
+    /* Centered logo */
+    margin-bottom: 2rem;
 }
 
 
