@@ -369,6 +369,42 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Advanced Features: Live Editor ---
+    const setupLiveEditor = () => {
+        const mapping = {
+            'view-student-name': 'input-student-name',
+            'view-student-id': 'input-student-id',
+            'view-student-batch': 'input-student-batch',
+            'view-student-dept': 'input-student-dept',
+            'view-teacher-name': 'input-teacher-name',
+            'view-teacher-designation': 'input-teacher-designation',
+            'view-teacher-dept': 'input-teacher-dept',
+            'view-work-title': 'input-work-title',
+            'view-course-name': 'input-course-name',
+            'view-course-code': 'input-course-code',
+            'view-work-no': 'input-work-no',
+            'view-submission-date': 'input-submission-date'
+        };
+
+        Object.keys(mapping).forEach(viewId => {
+            const elements = document.querySelectorAll(`#${viewId}`);
+            elements.forEach(el => {
+                el.addEventListener('click', () => {
+                    const inputId = mapping[viewId];
+                    const inputEl = document.getElementById(inputId);
+                    if (inputEl) {
+                        // Highlight and Focus
+                        inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        inputEl.focus();
+                        inputEl.classList.remove('input-highlight');
+                        void inputEl.offsetWidth; // Trigger reflow
+                        inputEl.classList.add('input-highlight');
+                    }
+                });
+            });
+        });
+    };
+
     // --- PWA: Service Worker Registration ---
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -383,4 +419,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // Final Init
     btnSavePreset?.addEventListener('click', savePreset);
     renderPresets();
+    setupLiveEditor();
 });

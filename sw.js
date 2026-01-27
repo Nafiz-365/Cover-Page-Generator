@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mu-cover-v6';
+const CACHE_NAME = 'mu-cover-v7';
 const ASSETS = [
     './',
     './index.html',
