@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metropolitan University - Cover Page Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hind+Siliguri:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+    <header class="main-header">
+        <div class="header-logo">
+            <img src="logo.png" alt="Metropolitan University Logo">
+            <div class="header-text">
+                <span>Cover Page Generator</span>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <button class="nav-btn active" id="btn-assignment">ASSIGNMENT</button>
+            <button class="nav-btn" id="btn-labreport">LAB REPORT</button>
+        </nav>
+    </header>
+
+    <main class="app-container">
+        <!-- Sidebar Form -->
+        <aside class="sidebar">
+            <div class="card">
+                <h2 id="sidebar-title">Assignment Details</h2>
+
+                <section class="form-group">
+                    <label>STUDENT INFORMATION</label>
+                    <input type="text" id="input-student-name" placeholder="Student Name">
+                    <div class="row">
+                        <input type="text" id="input-student-id" placeholder="ID">
+                        <input type="text" id="input-student-batch" placeholder="Batch">
+                    </div>
+                    <div class="row">
+                        <input type="text" id="input-student-section" placeholder="Section (Opt)">
+                        <select id="input-student-dept">
+                            <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                            <option value="Electrical & Electronic Engineering">Electrical & Electronic Engineering
+                            </option>
+                            <option value="Software Engineering">Software Engineering</option>
+                            <option value="Business Administration">Business Administration</option>
+                            <option value="English">English</option>
+                            <option value="Law & Justice">Law & Justice</option>
+                            <option value="Economics">Economics</option>
+                        </select>
+                    </div>
+                </section>
+
+                <section class="form-group">
+                    <label>TEACHER INFORMATION</label>
+                    <input type="text" id="input-teacher-name" placeholder="Teacher's Name">
+                    <input type="text" id="input-teacher-designation" placeholder="Designation">
+                    <select id="input-teacher-dept">
+                        <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                        <option value="Electrical & Electronic Engineering">Electrical & Electronic Engineering</option>
+                        <option value="Software Engineering">Software Engineering</option>
+                        <option value="Business Administration">Business Administration</option>
+                        <option value="English">English</option>
+                        <option value="Law & Justice">Law & Justice</option>
+                        <option value="Economics">Economics</option>
+                    </select>
+                </section>
+
+                <section class="form-group">
+                    <label>WORK DETAILS</label>
+                    <input type="text" id="input-work-title" placeholder="Assignment Title/Topic">
+                    <div class="row">
+                        <input type="text" id="input-course-name" placeholder="Course Name">
+                        <input type="text" id="input-course-code" placeholder="Course Code">
+                    </div>
+                    <div class="row">
+                        <input type="text" id="input-work-no" placeholder="Assignment No">
+                        <input type="date" id="input-submission-date">
+                    </div>
+                </section>
+
+                <div class="action-buttons">
+                    <button class="btn btn-generate" id="btn-generate">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <path
+                                d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
+                        </svg>
+                        GENERATE COVER PAGE
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Preview Section -->
+        <section class="preview-area">
+            <div id="capture-area" class="a4-page shadow">
+                <div class="preview-header">
+                    <img src="logo.png" alt="MU Logo" class="preview-logo">
+                </div>
+
+                <div class="preview-title">
+                    <h2 id="preview-mode-title">ASSIGNMENT NO- <span id="view-work-no">...</span></h2>
+                    <div class="assignment-on">
+                        <span>Assignment on</span>
+                        <div id="view-work-title">.........................</div>
+                    </div>
+                </div>
+
+                <div class="preview-course-box">
+                    <div class="course-row">
+                        <span class="label">Course Name :</span>
+                        <span class="value" id="view-course-name">.........................</span>
+                    </div>
+                    <div class="course-row">
+                        <span class="label">Course Code :</span>
+                        <span class="value" id="view-course-code">.........................</span>
+                    </div>
+                </div>
+
+                <div class="preview-footer">
+                    <div class="footer-column">
+                        <h3>SUBMITTED TO:</h3>
+                        <div class="footer-info">
+                            <p class="name" id="view-teacher-name">Teacher's Name</p>
+                            <p class="designation" id="view-teacher-designation">Designation</p>
+                            <p class="dept" id="view-teacher-dept">Department of Computer Science & Engineering</p>
+                            <p class="uni">Metropolitan University, Sylhet</p>
+                        </div>
+                    </div>
+                    <div class="footer-column">
+                        <h3>SUBMITTED BY:</h3>
+                        <div class="footer-info">
+                            <p class="name" id="view-student-name">Student Name</p>
+                            <p class="id">ID: <span id="view-student-id">.........</span></p>
+                            <p class="batch">Batch: <span id="view-student-batch">...</span></p>
+                            <p class="dept" id="view-student-dept">Department of Computer Science & Engineering</p>
+                            <p class="uni">Metropolitan University, Sylhet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="submission-date">
+                    <strong>Date of Submission:</strong> <span id="view-submission-date">2026-01-27</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="toast-container" class="toast-container"></div>
+    <script src="script.js"></script>
+</body>
+
+</html>
