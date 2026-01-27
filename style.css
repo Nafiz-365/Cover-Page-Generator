@@ -22,17 +22,22 @@
 }
 
 [data-theme="light"] {
-    --body-bg: radial-gradient(circle at 50% 50%, #f1f5f9 0%, #e2e8f0 100%);
-    --header-bg: rgba(255, 255, 255, 0.8);
-    --primary-bg: #f1f5f9;
+    --body-bg: #f3f4f6;
+    /* Solid light gray */
+    --header-bg: #ffffff;
+    --primary-bg: #ffffff;
     --card-bg: #ffffff;
     --sidebar-glass: rgba(0, 0, 0, 0.05);
     --input-bg: #ffffff;
-    --input-border: #cbd5e1;
-    --text-main: #0f172a;
-    --text-muted: #475569;
-    --header-text: #1e293b;
-    --nav-bg: rgba(0, 0, 0, 0.05);
+    --input-border: #d1d5db;
+    --text-main: #111827;
+    /* Near black */
+    --text-muted: #4b5563;
+    /* Darker gray */
+    --header-text: #111827;
+    /* Sharp black */
+    --nav-bg: #e5e7eb;
+    /* Clearly visible gray */
     --toast-bg: #ffffff;
 }
 
@@ -90,7 +95,12 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+    /* Stronger border for visibility */
+}
+
+[data-theme="dark"] .main-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 
 .header-logo {
@@ -125,31 +135,47 @@ body {
 }
 
 .theme-toggle {
-    background: none;
-    border: none;
-    color: var(--header-text);
+    background-color: var(--primary-bg);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    color: #fbbf24;
+    /* Sun color */
     cursor: pointer;
-    padding: 6px;
-    border-radius: 6px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="light"] .theme-toggle {
+    background-color: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    color: #4f46e5;
+    /* Sharp indigo for moon */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
 
 .theme-toggle:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1) rotate(15deg);
 }
 
 [data-theme="light"] .theme-toggle:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
 }
 
 .theme-divider {
     width: 1px;
-    height: 20px;
+    height: 24px;
     background-color: rgba(255, 255, 255, 0.1);
-    margin: 0 4px;
+    margin: 0 8px;
+}
+
+[data-theme="light"] .theme-divider {
+    background-color: #e2e8f0;
 }
 
 .nav-btn {

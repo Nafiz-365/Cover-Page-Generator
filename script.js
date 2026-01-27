@@ -83,6 +83,12 @@ document.addEventListener('DOMContentLoaded', () => {
     themeToggle?.addEventListener('click', () => {
         const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
         setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+
+        // Add a temporary pop animation
+        themeToggle.style.transform = 'scale(1.2) rotate(45deg)';
+        setTimeout(() => {
+            themeToggle.style.transform = '';
+        }, 300);
     });
 
     // Load saved theme
