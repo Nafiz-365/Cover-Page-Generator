@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mu-cover-v1';
+const CACHE_NAME = 'mu-cover-v5';
 const ASSETS = [
     './',
     './index.html',
@@ -9,10 +9,29 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
+    self.skipWaiting(); // Force update
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
             return cache.addAll(ASSETS);
         })
+    );
+});
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        Promise.all([
+            clients.claim(), // Take control immediately
+            caches.keys().then((cacheNames) => {
+                return Promise.all(
+                    cacheNames.map((cache) => {
+                        if (cache !== CACHE_NAME) {
+                            console.log('Deleting old cache:', cache);
+                            return caches.delete(cache);
+                        }
+                    })
+                );
+            })
+        ])
     );
 });
 

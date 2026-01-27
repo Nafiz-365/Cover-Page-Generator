@@ -49,6 +49,25 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('mu_cover_data', JSON.stringify(data));
     };
 
+    // --- Advanced Features: Themes ---
+    const themeToggleInput = document.getElementById('theme-toggle-input');
+
+    const setTheme = (theme) => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('mu_theme', theme);
+        if (themeToggleInput) {
+            themeToggleInput.checked = (theme === 'light');
+        }
+    };
+
+    themeToggleInput?.addEventListener('change', (e) => {
+        setTheme(e.target.checked ? 'light' : 'dark');
+    });
+
+    // Initial Load - restore transition after first paint
+    const savedTheme = localStorage.getItem('mu_theme') || 'dark';
+    setTheme(savedTheme);
+
     const loadData = () => {
         const saved = localStorage.getItem('mu_cover_data');
         if (saved) {
@@ -63,36 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- Advanced Features: Themes ---
-    const themeToggle = document.getElementById('theme-toggle');
-    const sunIcon = themeToggle?.querySelector('.sun-icon');
-    const moonIcon = themeToggle?.querySelector('.moon-icon');
 
-    const setTheme = (theme) => {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('mu_theme', theme);
-        if (theme === 'light') {
-            if (sunIcon) sunIcon.style.display = 'none';
-            if (moonIcon) moonIcon.style.display = 'block';
-        } else {
-            if (sunIcon) sunIcon.style.display = 'block';
-            if (moonIcon) moonIcon.style.display = 'none';
-        }
-    };
 
-    themeToggle?.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-        setTheme(currentTheme === 'dark' ? 'light' : 'dark');
-
-        // Add a temporary pop animation
-        themeToggle.style.transform = 'scale(1.2) rotate(45deg)';
-        setTimeout(() => {
-            themeToggle.style.transform = '';
-        }, 300);
-    });
-
-    // Load saved theme
-    setTheme(localStorage.getItem('mu_theme') || 'dark');
 
     // --- Advanced Features: Subject Library ---
     const presetLibrary = document.getElementById('preset-library');
@@ -260,10 +251,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (key === 'studentDept') {
             document.querySelectorAll('#view-student-dept').forEach(el => {
-                updateElement(el, `Department of ${value}`);
+                updateElement(el, `Department of ${value || '...'}`);
             });
         } else if (key === 'teacherDept') {
-            updateElement(views[key], `Department of ${value}`);
+            updateElement(views[key], `Department of ${value || '...'}`);
         } else if (views[key]) {
             const isWorkTitle = key === 'workTitle';
             const fallback = isWorkTitle ? '.........................' : (key.includes('Name') ? (key.includes('student') ? 'Student Name' : "Teacher's Name") : '.........................');
