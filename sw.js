@@ -1,10 +1,11 @@
-const CACHE_NAME = 'mu-cover-v7';
+const CACHE_NAME = 'mu-cover-v9';
 const ASSETS = [
     './',
     './index.html',
     './style.css',
     './script.js',
-    './logo.png',
+    './assets/logo.png',
+    './assets/favicon.jpg',
     'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hind+Siliguri:wght@400;600;700&display=swap'
 ];
 
