@@ -1,5 +1,6 @@
 {
   "name": "MU Cover Page Generator",
+  "author": "Nafiz Kamal Talha",
   "short_name": "MU Cover",
   "description": "Generate professional cover pages for Metropolitan University assignments and lab reports.",
   "start_url": ".",

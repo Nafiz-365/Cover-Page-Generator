@@ -107,15 +107,36 @@ body {
 }
 
 .header-text h1 {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 700;
     letter-spacing: 0.5px;
     color: var(--header-text);
+    margin: 0;
 }
 
-.header-text span {
-    font-size: 0.85rem;
+.creator-badge {
+    font-size: 0.65rem;
+    color: var(--accent-blue);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.8;
+}
+
+/* Dashboard Footer */
+.dashboard-footer {
+    padding: 2rem 0;
+    text-align: center;
     color: var(--text-muted);
+    font-size: 0.85rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    margin-top: 2rem;
+}
+
+.creator-name {
+    color: var(--accent-blue);
+    font-weight: 700;
+    text-shadow: 0 0 10px var(--accent-glow);
 }
 
 .header-right {
@@ -1019,3 +1040,111 @@ select:focus {
         padding: 20mm !important;
     }
 }
+/* GitHub Profile Button - From Uiverse.io */
+.github-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background-color: transparent;
+    position: relative;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all .3s;
+    margin-left: 0.5rem;
+}
+
+.svgContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    backdrop-filter: blur(0px);
+    border-radius: 10px;
+    transition: all .3s;
+    border: 1px solid rgba(156, 156, 156, 0.2);
+}
+
+.github-btn-bg {
+    position: absolute;
+    content: "";
+    width: 100%;
+    height: 100%;
+    background: #181818;
+    z-index: -1;
+    border-radius: 10px;
+    pointer-events: none;
+    transition: all .3s;
+}
+
+[data-theme="light"] .github-btn-bg {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+}
+
+[data-theme="light"] .svgContainer svg {
+    fill: #0f172a;
+}
+
+.github-btn:hover .github-btn-bg {
+    transform: rotate(35deg);
+    transform-origin: bottom;
+}
+
+.github-btn:hover .svgContainer {
+    background-color: rgba(156, 156, 156, 0.2);
+    backdrop-filter: blur(4px);
+}
+
+
+.creator-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 4px;
+}
+
+.creator-info .github-btn {
+    width: 32px;
+    height: 32px;
+    margin-left: 4px;
+    animation: breathingGlow 3s ease-in-out infinite;
+    z-index: 10;
+}
+
+@keyframes breathingGlow {
+    0%, 100% { 
+        box-shadow: 0 0 5px rgba(37, 99, 235, 0.2);
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 0 15px rgba(37, 99, 235, 0.6);
+        transform: scale(1.05);
+    }
+}
+
+.creator-info .github-btn:hover {
+    animation: none;
+    transform: scale(1.15) rotate(5deg);
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.8);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.creator-info .github-btn:hover .github-btn-bg {
+    background: var(--accent-blue);
+    transform: rotate(35deg) scale(1.1);
+}
+
+.creator-info .github-btn:hover .svgContainer {
+    border-color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.creator-info .svgContainer svg {
+    height: 1.25em;
+}
+
