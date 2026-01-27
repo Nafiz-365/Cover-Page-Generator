@@ -63,6 +63,125 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // --- Advanced Features: Themes ---
+    const themeToggle = document.getElementById('theme-toggle');
+    const sunIcon = themeToggle?.querySelector('.sun-icon');
+    const moonIcon = themeToggle?.querySelector('.moon-icon');
+
+    const setTheme = (theme) => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('mu_theme', theme);
+        if (theme === 'light') {
+            if (sunIcon) sunIcon.style.display = 'none';
+            if (moonIcon) moonIcon.style.display = 'block';
+        } else {
+            if (sunIcon) sunIcon.style.display = 'block';
+            if (moonIcon) moonIcon.style.display = 'none';
+        }
+    };
+
+    themeToggle?.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+        setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+
+    // Load saved theme
+    setTheme(localStorage.getItem('mu_theme') || 'dark');
+
+    // --- Advanced Features: Subject Library ---
+    const presetLibrary = document.getElementById('preset-library');
+    const btnSavePreset = document.getElementById('btn-save-preset');
+
+    const renderPresets = () => {
+        const presets = JSON.parse(localStorage.getItem('mu_presets') || '[]');
+        if (presetLibrary) {
+            presetLibrary.innerHTML = presets.map(p => `
+                <div class="preset-item" data-id="${p.id}" title="Click to load: ${p.name}">
+                    ${p.name}
+                    <span class="delete-preset" data-id="${p.id}" title="Delete Preset">
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                    </span>
+                </div>
+            `).join('');
+
+            presetLibrary.querySelectorAll('.preset-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const deleteBtn = e.target.closest('.delete-preset');
+                    if (deleteBtn) {
+                        e.stopPropagation();
+                        deletePreset(deleteBtn.dataset.id);
+                    } else {
+                        loadPreset(item.dataset.id);
+                    }
+                });
+            });
+        }
+    };
+
+    const savePreset = () => {
+        if (!inputs.courseName.value) {
+            showToast('Enter Course Name first');
+            return;
+        }
+        const preset = {
+            id: Date.now(),
+            name: inputs.courseName.value,
+            courseName: inputs.courseName.value,
+            courseCode: inputs.courseCode.value,
+            teacherName: inputs.teacherName.value,
+            teacherDesignation: inputs.teacherDesignation.value,
+            teacherDept: inputs.teacherDept.value
+        };
+        const presets = JSON.parse(localStorage.getItem('mu_presets') || '[]');
+        presets.push(preset);
+        localStorage.setItem('mu_presets', JSON.stringify(presets));
+        renderPresets();
+        showToast('Subject Saved to Library');
+    };
+
+    const loadPreset = (id) => {
+        const presets = JSON.parse(localStorage.getItem('mu_presets') || '[]');
+        const preset = presets.find(p => p.id == id);
+        if (preset) {
+            Object.keys(preset).forEach(key => {
+                if (inputs[key]) {
+                    inputs[key].value = preset[key];
+                    syncView(key, preset[key]);
+                }
+            });
+            saveData();
+            updateProgress();
+            showToast('Preset Loaded');
+        }
+    };
+
+    const deletePreset = (id) => {
+        let presets = JSON.parse(localStorage.getItem('mu_presets') || '[]');
+        presets = presets.filter(p => p.id != id);
+        localStorage.setItem('mu_presets', JSON.stringify(presets));
+        renderPresets();
+        showToast('Preset Deleted');
+    };
+
+    const selectTemplate = document.getElementById('select-template');
+    const captureArea = document.getElementById('capture-area');
+
+    const setTemplate = (template) => {
+        captureArea.className = `a4-page shadow ${template}`;
+        localStorage.setItem('mu_template', template);
+    };
+
+    selectTemplate?.addEventListener('change', (e) => {
+        setTemplate(e.target.value);
+    });
+
+    // Load saved template
+    const savedTemplate = localStorage.getItem('mu_template') || 'template-classic';
+    if (selectTemplate) {
+        selectTemplate.value = savedTemplate;
+        setTemplate(savedTemplate);
+    }
+
     // --- Core Logic ---
     const today = new Date().toISOString().split('T')[0];
     inputs.submissionDate.value = today;
@@ -246,8 +365,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnGenerate.disabled = false;
                 btnGenerate.style.opacity = '1';
                 btnGenerate.innerHTML = originalContent;
-                showToast('Error generating PDF.');
             });
         });
     }
+
+    // --- PWA: Service Worker Registration ---
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').then(reg => {
+                console.log('SW Registered');
+            }).catch(err => {
+                console.log('SW Registration failed', err);
+            });
+        });
+    }
+
+    // Final Init
+    btnSavePreset?.addEventListener('click', savePreset);
+    renderPresets();
 });
