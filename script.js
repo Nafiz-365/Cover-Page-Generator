@@ -256,8 +256,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (key === 'teacherDept') {
             updateElement(views[key], `Department of ${value || '...'}`);
         } else if (views[key]) {
-            const isWorkTitle = key === 'workTitle';
-            const fallback = isWorkTitle ? '.........................' : (key.includes('Name') ? (key.includes('student') ? 'Student Name' : "Teacher's Name") : '.........................');
+            let fallback = '.........................';
+            if (key === 'studentName') fallback = 'Student Name';
+            else if (key === 'teacherName') fallback = "Teacher's Name";
+            else if (key === 'workTitle') fallback = '.........................';
+
             updateElement(views[key], value || fallback);
         }
     };
