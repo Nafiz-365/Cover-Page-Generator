@@ -179,6 +179,32 @@ document.addEventListener('DOMContentLoaded', () => {
         setTemplate(savedTemplate);
     }
 
+    // --- Typography Logic ---
+    const selectFont = document.getElementById('select-font');
+
+    const setFont = (fontClass) => {
+        // Remove existing font classes
+        const fonts = ['font-classic', 'font-sans', 'font-modern', 'font-serif', 'font-mono'];
+        captureArea.classList.remove(...fonts);
+
+        // Add new class
+        if (fontClass) {
+            captureArea.classList.add(fontClass);
+            localStorage.setItem('mu_font', fontClass);
+        }
+    };
+
+    selectFont?.addEventListener('change', (e) => {
+        setFont(e.target.value);
+    });
+
+    // Load saved font
+    const savedFont = localStorage.getItem('mu_font') || 'font-classic';
+    if (selectFont) {
+        selectFont.value = savedFont;
+        setFont(savedFont);
+    }
+
     // --- Core Logic ---
     const today = new Date().toISOString().split('T')[0];
     inputs.submissionDate.value = today;
@@ -413,6 +439,54 @@ document.addEventListener('DOMContentLoaded', () => {
             }).catch(err => {
                 console.log('SW Registration failed', err);
             });
+        });
+    }
+
+    // --- Custom Logo Upload ---
+    const logoInput = document.getElementById('input-logo-upload');
+    const btnResetLogo = document.getElementById('btn-reset-logo');
+    const previewLogo = document.querySelector('.preview-logo');
+
+    if (logoInput && previewLogo) {
+        logoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (readerEvent) => {
+                    previewLogo.src = readerEvent.target.result;
+                    btnResetLogo.style.display = 'flex';
+                    showToast('Custom Logo Uploaded');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        btnResetLogo?.addEventListener('click', () => {
+            previewLogo.src = 'assets/logo.png';
+            btnResetLogo.style.display = 'none';
+            logoInput.value = '';
+            showToast('Restored Default Logo');
+        });
+    }
+
+    // --- Mobile Hamburger Menu ---
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (menuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', () => {
+            const isOpened = mobileMenu.classList.toggle('show-menu');
+            const iconPath = menuBtn.querySelector('path');
+
+            if (isOpened) {
+                // Switch to Close (X) Icon
+                iconPath.setAttribute('d', 'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z');
+                menuBtn.setAttribute('aria-label', 'Close Menu');
+            } else {
+                // Switch back to Menu (Bars) Icon
+                iconPath.setAttribute('d', 'M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z');
+                menuBtn.setAttribute('aria-label', 'Open Menu');
+            }
         });
     }
 
