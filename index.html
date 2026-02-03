@@ -16,6 +16,7 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hind+Siliguri:wght@400;600;700&family=Merriweather:wght@400;700&family=Poppins:wght@400;600;700&family=Roboto+Mono:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap"
         rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 
 <body>
@@ -84,50 +85,32 @@
         <!-- Sidebar Form -->
         <aside class="sidebar">
             <div class="card">
-                <h2 id="sidebar-title">Assignment Details</h2>
+                <h2 id="sidebar-title">Cover Page Data</h2>
 
-                <section class="form-group">
-                    <label>TYPOGRAPHY</label>
-                    <select id="select-font">
-                        <option value="font-classic">Inter (Default)</option>
-                        <option value="font-sans">Open Sans (Neutral)</option>
-                        <option value="font-modern">Poppins (Modern)</option>
-                        <option value="font-serif">Merriweather (Formal)</option>
-                        <option value="font-mono">Roboto Mono (Tech)</option>
-                    </select>
-                </section>
-
-                <section class="form-group">
-                    <label>LAYOUT TEMPLATE</label>
-                    <select id="select-template">
-                        <option value="template-classic">Classic (Official)</option>
-                        <option value="template-minimal">Minimal (Clean)</option>
-                        <option value="template-modern">Modern (Accent)</option>
-                        <option value="template-bordered">Bordered (Elegant)</option>
-                        <option value="template-tech">Tech (Geometric)</option>
-                    </select>
-                </section>
-
-                <section class="form-group">
-                    <label>CUSTOM BRANDING (OPTIONAL)</label>
-                    <div class="logo-upload-box">
-                        <input type="file" id="input-logo-upload" accept="image/*" hidden>
-                        <button class="btn-upload" onclick="document.getElementById('input-logo-upload').click()">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                                <path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z" />
-                            </svg>
-                            Upload Custom Logo
-                        </button>
-                        <button class="btn-reset-logo" id="btn-reset-logo" title="Reset to Default Logo"
-                            style="display: none;">
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <!-- Priority 1: Work/Assignment Details -->
+                <section class="form-group highlight-group">
+                    <div class="section-header">
+                        <label>WORK DETAILS</label>
+                        <button class="btn-text" id="btn-save-preset" title="Save these details as a template">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
                                 <path
-                                    d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+                                    d="M17 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V7l-4-4zm-5 16a3 3 0 110-6 3 3 0 010 6zm3-10H5V5h10v4z" />
                             </svg>
+                            SAVE AS PRESET
                         </button>
+                    </div>
+                    <input type="text" id="input-work-title" placeholder="Assignment Title/Topic">
+                    <div class="row">
+                        <input type="text" id="input-course-name" placeholder="Course Name">
+                        <input type="text" id="input-course-code" placeholder="Course Code">
+                    </div>
+                    <div class="row">
+                        <input type="text" id="input-work-no" placeholder="Assignment No">
+                        <input type="date" id="input-submission-date">
                     </div>
                 </section>
 
+                <!-- Priority 2: Student Identity -->
                 <section class="form-group">
                     <label>STUDENT INFORMATION</label>
                     <input type="text" id="input-student-name" placeholder="Student Name">
@@ -150,6 +133,7 @@
                     </div>
                 </section>
 
+                <!-- Priority 3: Teacher/Recipient Info -->
                 <section class="form-group">
                     <label>TEACHER INFORMATION</label>
                     <input type="text" id="input-teacher-name" placeholder="Teacher's Name">
@@ -165,27 +149,72 @@
                     </select>
                 </section>
 
-                <section class="form-group">
-                    <div class="section-header">
-                        <label>WORK DETAILS</label>
-                        <button class="btn-text" id="btn-save-preset" title="Save these details as a template">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-                                <path
-                                    d="M17 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V7l-4-4zm-5 16a3 3 0 110-6 3 3 0 010 6zm3-10H5V5h10v4z" />
-                            </svg>
-                            SAVE AS PRESET
-                        </button>
-                    </div>
-                    <input type="text" id="input-work-title" placeholder="Assignment Title/Topic">
+                <div class="sidebar-divider"><span>DESIGN & BRANDING</span></div>
+
+                <!-- Priority 4: Visual Customization -->
+                <div class="design-customization">
                     <div class="row">
-                        <input type="text" id="input-course-name" placeholder="Course Name">
-                        <input type="text" id="input-course-code" placeholder="Course Code">
+                        <section class="form-group mini">
+                            <label>TEMPLATE</label>
+                            <select id="select-template">
+                                <option value="template-classic">Classic (Official)</option>
+                                <option value="template-minimal">Minimal (Clean)</option>
+                                <option value="template-modern">Modern (Accent)</option>
+                                <option value="template-bordered">Bordered (Elegant)</option>
+                                <option value="template-tech">Tech (Geometric)</option>
+                            </select>
+                        </section>
+
+                        <section class="form-group mini">
+                            <label>FONT</label>
+                            <select id="select-font">
+                                <option value="font-classic">Inter (Default)</option>
+                                <option value="font-sans">Open Sans (Neutral)</option>
+                                <option value="font-modern">Poppins (Modern)</option>
+                                <option value="font-serif">Merriweather (Formal)</option>
+                                <option value="font-mono">Roboto Mono (Tech)</option>
+                            </select>
+                        </section>
                     </div>
+
                     <div class="row">
-                        <input type="text" id="input-work-no" placeholder="Assignment No">
-                        <input type="date" id="input-submission-date">
+                        <section class="form-group mini">
+                            <label>ACCENT COLOR</label>
+                            <div class="accent-picker">
+                                <div class="color-dot active" style="background: #4ecdc4;" data-color="#4ecdc4"></div>
+                                <div class="color-dot" style="background: #ff6b6b;" data-color="#ff6b6b"></div>
+                                <div class="color-dot" style="background: #4f46e5;" data-color="#4f46e5"></div>
+                                <div class="color-dot" style="background: #f59e0b;" data-color="#f59e0b"></div>
+                                <div class="color-dot" style="background: #10b981;" data-color="#10b981"></div>
+                                <div class="color-dot" style="background: #8b5cf6;" data-color="#8b5cf6"></div>
+                                <div class="color-input-wrapper">
+                                    <input type="color" id="input-accent-color" value="#4ecdc4" title="Custom Color">
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="form-group mini">
+                            <label>LOGO</label>
+                            <div class="logo-upload-box">
+                                <input type="file" id="input-logo-upload" accept="image/*" hidden>
+                                <button class="btn-upload compact"
+                                    onclick="document.getElementById('input-logo-upload').click()">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                                        <path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z" />
+                                    </svg>
+                                    Upload
+                                </button>
+                                <button class="btn-reset-logo" id="btn-reset-logo" title="Reset Logo"
+                                    style="display: none;">
+                                    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                                        <path
+                                            d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </section>
                     </div>
-                </section>
+                </div>
 
                 <div class="preset-library" id="preset-library">
                     <!-- Presets will be rendered here -->

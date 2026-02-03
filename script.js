@@ -380,11 +380,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('Cover Page Generated Successfully!');
 
                 // Celebration!
+                const primaryColor = localStorage.getItem('mu_accent_color') || '#4ecdc4';
                 confetti({
                     particleCount: 150,
                     spread: 70,
                     origin: { y: 0.6 },
-                    colors: ['#2563eb', '#1e3a8a', '#ffffff']
+                    colors: [primaryColor, '#ffffff', '#2563eb']
                 });
             }).catch(err => {
                 console.error('PDF Generation Error:', err);
@@ -505,6 +506,41 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // --- Advanced Features: Accent Color Picker ---
+    const colorDots = document.querySelectorAll('.color-dot');
+    const customColorInput = document.getElementById('input-accent-color');
+    const root = document.querySelector(':root');
+
+    const hexToRgb = (hex) => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ?
+            `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : null;
+    };
+
+    const setAccentColor = (color) => {
+        root.style.setProperty('--accent-color', color);
+        const rgb = hexToRgb(color);
+        if (rgb) root.style.setProperty('--accent-rgb', rgb);
+        localStorage.setItem('mu_accent_color', color);
+
+        // Update dots UI
+        colorDots.forEach(dot => {
+            if (dot.dataset.color === color) dot.classList.add('active');
+            else dot.classList.remove('active');
+        });
+        if (customColorInput) customColorInput.value = color;
+    };
+
+    colorDots.forEach(dot => {
+        dot.addEventListener('click', () => setAccentColor(dot.dataset.color));
+    });
+
+    customColorInput?.addEventListener('input', (e) => setAccentColor(e.target.value));
+
+    // Load saved accent
+    const savedAccent = localStorage.getItem('mu_accent_color') || '#4ecdc4';
+    setAccentColor(savedAccent);
 
     // Final Init
     btnSavePreset?.addEventListener('click', savePreset);
