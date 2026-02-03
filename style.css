@@ -1021,7 +1021,7 @@ select:focus {
         margin: 0 auto;
         /* Center logo */
         justify-content: center;
-        gap: 0.5rem;
+        gap: 1.5rem;
     }
 
     .header-logo img {
@@ -1039,7 +1039,7 @@ select:focus {
     }
 
     .header-text h1 {
-        font-size: 12px;
+        font-size: 10px;
         font-weight: 600;
         margin: 0;
         line-height: 1;
@@ -1058,7 +1058,7 @@ select:focus {
     }
 
     .creator-info .creator-badge {
-        font-size: 8px !important;
+        font-size: 4px !important;
         margin: 0;
         line-height: 1;
     }
