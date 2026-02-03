@@ -474,18 +474,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileMenu = document.getElementById('mobile-menu');
 
     if (menuBtn && mobileMenu) {
-        menuBtn.addEventListener('click', () => {
-            const isOpened = mobileMenu.classList.toggle('show-menu');
-            const iconPath = menuBtn.querySelector('path');
+        // Toggle Menu Function
+        const toggleMenu = (forceClose = false) => {
+            const isOpened = forceClose ? false : mobileMenu.classList.toggle('show-menu');
+            if (forceClose) mobileMenu.classList.remove('show-menu');
 
+            const iconPath = menuBtn.querySelector('path');
             if (isOpened) {
-                // Switch to Close (X) Icon
+                // Close (X) Icon
                 iconPath.setAttribute('d', 'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z');
                 menuBtn.setAttribute('aria-label', 'Close Menu');
             } else {
-                // Switch back to Menu (Bars) Icon
+                // Menu (Bars) Icon
                 iconPath.setAttribute('d', 'M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z');
                 menuBtn.setAttribute('aria-label', 'Open Menu');
+            }
+        };
+
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent document click from immediately closing it
+            toggleMenu();
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', (e) => {
+            if (mobileMenu.classList.contains('show-menu') &&
+                !mobileMenu.contains(e.target) &&
+                !menuBtn.contains(e.target)) {
+                toggleMenu(true); // Force close
             }
         });
     }
