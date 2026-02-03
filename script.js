@@ -334,6 +334,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const element = document.getElementById('capture-area');
             const originalContent = btnGenerate.innerHTML;
 
+            const requiredFields = [
+                { id: 'input-student-name', name: 'Student Name' },
+                { id: 'input-work-title', name: 'Work Title' },
+                { id: 'input-student-id', name: 'Student ID' }
+            ];
+
+            let firstError = null;
+            requiredFields.forEach(field => {
+                const el = document.getElementById(field.id);
+                if (!el || !el.value.trim()) {
+                    el?.classList.add('error-shake');
+                    setTimeout(() => el?.classList.remove('error-shake'), 500);
+                    if (!firstError) firstError = field.name;
+                }
+            });
+
+            if (firstError) {
+                showToast(`Please fill in: ${firstError}`);
+                return;
+            }
+
             btnGenerate.disabled = true;
             btnGenerate.style.opacity = '0.7';
             btnGenerate.textContent = 'GENERATING...';
@@ -541,6 +562,84 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load saved accent
     const savedAccent = localStorage.getItem('mu_accent_color') || '#4ecdc4';
     setAccentColor(savedAccent);
+
+    // --- Advanced UX: Smart Input Intelligence ---
+    const toTitleCase = (str) => {
+        return str.replace(/\b\w/g, l => l.toUpperCase());
+    };
+
+    const kebabToCamel = (str) => {
+        return str.replace(/-([a-z])/g, g => g[1].toUpperCase());
+    };
+
+    const smartInputs = ['input-student-name', 'input-teacher-name', 'input-work-title', 'input-course-name'];
+    smartInputs.forEach(id => {
+        const el = document.getElementById(id);
+        el?.addEventListener('blur', (e) => {
+            const val = e.target.value;
+            if (val) {
+                const formatted = toTitleCase(val);
+                if (formatted !== val) {
+                    e.target.value = formatted;
+                    // Fix: Convert 'student-name' to 'studentName' for syncView
+                    const key = kebabToCamel(id.replace('input-', ''));
+                    syncView(key, formatted);
+                }
+            }
+        });
+    });
+
+    // Course Memory Logic
+    const courseCodeInput = document.getElementById('input-course-code');
+    const courseNameInput = document.getElementById('input-course-name');
+
+    courseCodeInput?.addEventListener('blur', () => {
+        const code = courseCodeInput.value.toUpperCase().trim();
+        const memory = JSON.parse(localStorage.getItem('mu_course_memory') || '{}');
+        if (code && memory[code] && !courseNameInput.value) {
+            courseNameInput.value = memory[code];
+            syncView('courseName', memory[code]);
+            showToast(`Suggested: ${memory[code]}`);
+        }
+    });
+
+    courseNameInput?.addEventListener('blur', () => {
+        const code = courseCodeInput.value.toUpperCase().trim();
+        const name = courseNameInput.value.trim();
+        if (code && name) {
+            const memory = JSON.parse(localStorage.getItem('mu_course_memory') || '{}');
+            memory[code] = name;
+            localStorage.setItem('mu_course_memory', JSON.stringify(memory));
+        }
+    });
+
+    // --- Advanced UX: Interactive Preview (Click-to-Edit) ---
+    const previewContainer = document.getElementById('capture-area');
+    if (previewContainer) {
+        // Add visual hint (tooltips)
+        const editableElements = previewContainer.querySelectorAll('[id^="view-"]');
+        editableElements.forEach(el => {
+            el.setAttribute('title', 'Click to edit in sidebar');
+            el.classList.add('clickable-view');
+        });
+
+        previewContainer.addEventListener('click', (e) => {
+            const target = e.target.closest('[id^="view-"]');
+            if (target) {
+                const key = target.id.replace('view-', '');
+                // Correct ID mapping: view-student-name -> input-student-name
+                const inputId = `input-${key}`;
+                const inputEl = document.getElementById(inputId);
+
+                if (inputEl) {
+                    inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    inputEl.focus();
+                    inputEl.classList.add('input-highlight');
+                    setTimeout(() => inputEl.classList.remove('input-highlight'), 1500);
+                }
+            }
+        });
+    }
 
     // Final Init
     btnSavePreset?.addEventListener('click', savePreset);

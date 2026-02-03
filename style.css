@@ -64,6 +64,32 @@
     }
 }
 
+@keyframes shakeHorizontal {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    50% {
+        transform: translateX(5px);
+    }
+
+    75% {
+        transform: translateX(-5px);
+    }
+}
+
+.error-shake {
+    animation: shakeHorizontal 0.3s ease-in-out;
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
 .animate-text {
     animation: fadeIn 0.4s ease forwards;
 }
@@ -851,10 +877,10 @@ select:focus {
     -webkit-font-smoothing: antialiased;
 }
 
-[id^="view-"] {
+[id^="view-"],
+.clickable-view {
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 4px;
     position: relative;
 }
 
