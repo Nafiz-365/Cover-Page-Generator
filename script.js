@@ -1,4 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const APP_CONFIG = window.APP_CONFIG || {};
+    const universityLine = APP_CONFIG.universityLine || 'Metropolitan University, Sylhet';
+
+    // Apply basic branding (optional)
+    try {
+        if (APP_CONFIG.universityName) document.title = `${APP_CONFIG.universityName} - Cover Page Generator`;
+        if (APP_CONFIG.appShortName && document.getElementById('header-app-name')) {
+            document.getElementById('header-app-name').textContent = APP_CONFIG.appShortName;
+        }
+        if (APP_CONFIG.logoPath) {
+            const headerLogo = document.getElementById('header-logo');
+            const previewLogo = document.getElementById('preview-logo');
+            if (headerLogo) headerLogo.src = APP_CONFIG.logoPath;
+            if (previewLogo) previewLogo.src = APP_CONFIG.logoPath;
+        }
+        const uniTo = document.getElementById('view-university-line-to');
+        const uniBy = document.getElementById('view-university-line-by');
+        if (uniTo) uniTo.textContent = universityLine;
+        if (uniBy) uniBy.textContent = universityLine;
+    } catch {
+        // ignore branding failures
+    }
+
     // Selectors - Inputs
     const inputs = {
         studentName: document.getElementById('input-student-name'),
@@ -13,7 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
         courseName: document.getElementById('input-course-name'),
         courseCode: document.getElementById('input-course-code'),
         workNo: document.getElementById('input-work-no'),
-        submissionDate: document.getElementById('input-submission-date')
+        submissionDate: document.getElementById('input-submission-date'),
+        universityLine: document.getElementById('input-university-line')
     };
 
     // Selectors - View Elements
@@ -21,7 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
         studentName: document.getElementById('view-student-name'),
         studentId: document.getElementById('view-student-id'),
         studentBatch: document.getElementById('view-student-batch'),
-        studentDept: document.querySelectorAll('#view-student-dept'),
+        studentSection: document.getElementById('view-student-section'),
+        studentDept: document.getElementById('view-student-dept'),
         teacherName: document.getElementById('view-teacher-name'),
         teacherDesignation: document.getElementById('view-teacher-designation'),
         teacherDept: document.getElementById('view-teacher-dept'),
@@ -29,17 +54,12 @@ document.addEventListener('DOMContentLoaded', () => {
         courseName: document.getElementById('view-course-name'),
         courseCode: document.getElementById('view-course-code'),
         workNo: document.getElementById('view-work-no'),
-        submissionDate: document.getElementById('view-submission-date')
+        submissionDate: document.getElementById('view-submission-date'),
+        universityLineTo: document.getElementById('view-university-line-to'),
+        universityLineBy: document.getElementById('view-university-line-by')
     };
 
-    // --- Pro Features: Progress & Persistence ---
-    const progressBar = document.getElementById('progress-bar');
-    const updateProgress = () => {
-        const totalFields = Object.keys(inputs).length;
-        const filledFields = Object.values(inputs).filter(input => input.value.trim() !== '').length;
-        const progress = (filledFields / totalFields) * 100;
-        if (progressBar) progressBar.style.width = `${progress}%`;
-    };
+
 
     const saveData = () => {
         const data = {};
@@ -78,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     syncView(key, data[key]);
                 }
             });
-            updateProgress();
         }
     };
 
@@ -127,13 +146,16 @@ document.addEventListener('DOMContentLoaded', () => {
             courseCode: inputs.courseCode.value,
             teacherName: inputs.teacherName.value,
             teacherDesignation: inputs.teacherDesignation.value,
-            teacherDept: inputs.teacherDept.value
+            teacherDept: inputs.teacherDept.value,
+            studentBatch: inputs.studentBatch.value,
+            studentSection: inputs.studentSection.value,
+            studentDept: inputs.studentDept.value
         };
         const presets = JSON.parse(localStorage.getItem('mu_presets') || '[]');
         presets.push(preset);
         localStorage.setItem('mu_presets', JSON.stringify(presets));
         renderPresets();
-        showToast('Subject Saved to Library');
+        showToast('Info Saved to Library');
     };
 
     const loadPreset = (id) => {
@@ -147,7 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
             saveData();
-            updateProgress();
             showToast('Preset Loaded');
         }
     };
@@ -164,8 +185,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const captureArea = document.getElementById('capture-area');
 
     const setTemplate = (template) => {
-        captureArea.className = `a4-page shadow ${template}`;
-        localStorage.setItem('mu_template', template);
+        const templates = ['template-classic', 'template-modern', 'template-bordered', 'template-tech'];
+        captureArea.classList.remove(...templates);
+        if (template) {
+            captureArea.classList.add(template);
+            localStorage.setItem('mu_template', template);
+        }
     };
 
     selectTemplate?.addEventListener('change', (e) => {
@@ -208,7 +233,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Core Logic ---
     const today = new Date().toISOString().split('T')[0];
     inputs.submissionDate.value = today;
-    views.submissionDate.textContent = today;
 
     // Reset Form
     document.getElementById('btn-reset')?.addEventListener('click', () => {
@@ -220,7 +244,6 @@ document.addEventListener('DOMContentLoaded', () => {
             inputs.submissionDate.value = today;
             syncView('submissionDate', today);
             localStorage.removeItem('mu_cover_data');
-            updateProgress();
             showToast('Form Cleared');
         }
     });
@@ -276,18 +299,31 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         if (key === 'studentDept') {
-            document.querySelectorAll('#view-student-dept').forEach(el => {
-                updateElement(el, `Department of ${value || '...'}`);
-            });
+            updateElement(views.studentDept, `Department of ${value || '...'}`);
         } else if (key === 'teacherDept') {
-            updateElement(views[key], `Department of ${value || '...'}`);
+            updateElement(views.teacherDept, `Department of ${value || '...'}`);
+        } else if (key === 'studentSection') {
+            const container = document.getElementById('view-student-section-container');
+            if (container) container.style.display = value ? 'block' : 'none';
+            updateElement(views.studentSection, value);
+        } else if (key === 'universityLine') {
+            updateElement(views.universityLineTo, value || APP_CONFIG.universityLine || 'Metropolitan University, Sylhet');
+            updateElement(views.universityLineBy, value || APP_CONFIG.universityLine || 'Metropolitan University, Sylhet');
         } else if (views[key]) {
             let fallback = '.........................';
             if (key === 'studentName') fallback = 'Student Name';
             else if (key === 'teacherName') fallback = "Teacher's Name";
             else if (key === 'workTitle') fallback = '.........................';
 
-            updateElement(views[key], value || fallback);
+            let displayValue = value;
+            if (key === 'submissionDate' && value) {
+                const dateObj = new Date(value);
+                if (!isNaN(dateObj)) {
+                    displayValue = dateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+                }
+            }
+
+            updateElement(views[key], displayValue || fallback);
         }
     };
 
@@ -296,7 +332,6 @@ document.addEventListener('DOMContentLoaded', () => {
         inputs[key].addEventListener('input', (e) => {
             syncView(key, e.target.value);
             saveData();
-            updateProgress();
 
             // Special case for workNo because of innerHTML in updateMode
             if (key === 'workNo') {
@@ -308,6 +343,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize
     loadData();
+
+    // Default bindings if unset
+    if (inputs.submissionDate.value === today) {
+        syncView('submissionDate', today);
+    }
+    if (inputs.universityLine && !inputs.universityLine.value) {
+        inputs.universityLine.value = universityLine;
+        syncView('universityLine', universityLine);
+    }
 
     // Toast System
     const showToast = (message) => {
@@ -330,8 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Download PDF (Renamed to Generate)
     const btnGenerate = document.getElementById('btn-generate');
     if (btnGenerate) {
-        btnGenerate.addEventListener('click', () => {
-            const element = document.getElementById('capture-area');
+        btnGenerate.addEventListener('click', async () => {
             const originalContent = btnGenerate.innerHTML;
 
             const requiredFields = [
@@ -359,108 +402,101 @@ document.addEventListener('DOMContentLoaded', () => {
             btnGenerate.style.opacity = '0.7';
             btnGenerate.textContent = 'GENERATING...';
 
-            // Options for high-quality single page A4 PDF
-            const opt = {
-                margin: 0,
-                filename: `MU_CoverPage_${inputs.studentName.value || 'Student'}.pdf`,
-                image: { type: 'jpeg', quality: 1 },
-                html2canvas: {
-                    scale: 3,
-                    useCORS: true,
-                    letterRendering: true,
-                    logging: false,
-                    scrollX: 0,
-                    scrollY: 0,
-                    // Use onclone to style the captured version perfectly
-                    onclone: (clonedDoc) => {
-                        const clonedEl = clonedDoc.getElementById('capture-area');
-                        clonedEl.style.boxShadow = 'none';
-                        clonedEl.style.margin = '0';
-                        clonedEl.style.padding = '25mm 20mm'; // Symmetrical margins
-                        clonedEl.style.width = '210mm';
-                        clonedEl.style.height = '297mm';
-                        clonedEl.style.position = 'fixed';
-                        clonedEl.style.top = '0';
-                        clonedEl.style.left = '0';
-                        clonedEl.style.transform = 'none';
-
-                        // Clear body completely
-                        clonedDoc.body.style.margin = '0';
-                        clonedDoc.body.style.padding = '0';
-                        clonedDoc.body.style.overflow = 'hidden';
-                    }
-                },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            const getAccentRgb = (hex) => {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result
+                    ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+                    : '78, 205, 196';
             };
 
-            // Capture and save
-            html2pdf().set(opt).from(element).save().then(() => {
+            // Helper: fetch any img src and return base64 data URL
+            const getLogoAsBase64 = async (imgEl) => {
+                if (!imgEl) return null;
+                if (imgEl.src.startsWith('data:')) return imgEl.src;
+                try {
+                    const resp = await fetch(imgEl.src);
+                    const blob = await resp.blob();
+                    return await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.readAsDataURL(blob);
+                    });
+                } catch { return null; }
+            };
+
+            const logoEl = document.querySelector('.preview-logo');
+            const logoDataUrl = await getLogoAsBase64(logoEl);
+
+            const payload = {
+                mode: btnLabReport?.classList.contains('active') ? 'lab' : 'assignment',
+                studentName: inputs.studentName.value,
+                studentId: inputs.studentId.value,
+                studentBatch: inputs.studentBatch.value,
+                studentSection: inputs.studentSection.value,
+                studentDept: inputs.studentDept.value,
+                teacherName: inputs.teacherName.value,
+                teacherDesignation: inputs.teacherDesignation.value,
+                teacherDept: inputs.teacherDept.value,
+                workTitle: inputs.workTitle.value,
+                courseName: inputs.courseName.value,
+                courseCode: inputs.courseCode.value,
+                workNo: inputs.workNo.value,
+                submissionDate: inputs.submissionDate.value,
+                template: localStorage.getItem('mu_template') || 'template-classic',
+                font: localStorage.getItem('mu_font') || 'font-classic',
+                accentColor: localStorage.getItem('mu_accent_color') || '#4ecdc4',
+                accentRgb: getAccentRgb(localStorage.getItem('mu_accent_color') || '#4ecdc4'),
+                logoDataUrl,
+                universityLine
+            };
+
+            // Server-side PDF (deterministic across mobile/desktop)
+            try {
+                const resp = await fetch('/api/pdf', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!resp.ok) throw new Error(`Server PDF failed: ${resp.status}`);
+                const blob = await resp.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const safeName = (inputs.studentName.value || 'Student').replace(/[^\w\-]+/g, '_').slice(0, 40);
+                a.download = `CoverPage_${safeName}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+
                 btnGenerate.disabled = false;
                 btnGenerate.style.opacity = '1';
                 btnGenerate.innerHTML = originalContent;
                 showToast('Cover Page Generated Successfully!');
-
-                // Celebration!
-                const primaryColor = localStorage.getItem('mu_accent_color') || '#4ecdc4';
-                confetti({
-                    particleCount: 150,
-                    spread: 70,
-                    origin: { y: 0.6 },
-                    colors: [primaryColor, '#ffffff', '#2563eb']
-                });
-            }).catch(err => {
-                console.error('PDF Generation Error:', err);
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#4ecdc4', '#ff6b6b', '#4f46e5', '#f59e0b', '#10b981']
+                    });
+                }
+                return;
+            } catch (e) {
+                console.error('Server-side PDF generation failed:', e);
                 btnGenerate.disabled = false;
                 btnGenerate.style.opacity = '1';
                 btnGenerate.innerHTML = originalContent;
-            });
+                showToast('PDF server not running. Start app with: npm run dev');
+            }
         });
     }
 
-    // --- Advanced Features: Live Editor ---
-    const setupLiveEditor = () => {
-        const mapping = {
-            'view-student-name': 'input-student-name',
-            'view-student-id': 'input-student-id',
-            'view-student-batch': 'input-student-batch',
-            'view-student-dept': 'input-student-dept',
-            'view-teacher-name': 'input-teacher-name',
-            'view-teacher-designation': 'input-teacher-designation',
-            'view-teacher-dept': 'input-teacher-dept',
-            'view-work-title': 'input-work-title',
-            'view-course-name': 'input-course-name',
-            'view-course-code': 'input-course-code',
-            'view-work-no': 'input-work-no',
-            'view-submission-date': 'input-submission-date'
-        };
 
-        Object.keys(mapping).forEach(viewId => {
-            const elements = document.querySelectorAll(`#${viewId}`);
-            elements.forEach(el => {
-                el.addEventListener('click', () => {
-                    const inputId = mapping[viewId];
-                    const inputEl = document.getElementById(inputId);
-                    if (inputEl) {
-                        // Highlight and Focus
-                        inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        inputEl.focus();
-                        inputEl.classList.remove('input-highlight');
-                        void inputEl.offsetWidth; // Trigger reflow
-                        inputEl.classList.add('input-highlight');
-                    }
-                });
-            });
-        });
-    };
 
-    // --- PWA: Service Worker Registration ---
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').then(reg => {
-                console.log('SW Registered');
-            }).catch(err => {
-                console.log('SW Registration failed', err);
-            });
+            navigator.serviceWorker.register('./sw.js').catch(() => {});
         });
     }
 
@@ -468,6 +504,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoInput = document.getElementById('input-logo-upload');
     const btnResetLogo = document.getElementById('btn-reset-logo');
     const previewLogo = document.querySelector('.preview-logo');
+
+    const btnUploadLogo = document.getElementById('btn-upload-logo');
+    btnUploadLogo?.addEventListener('click', () => logoInput?.click());
 
     if (logoInput && previewLogo) {
         logoInput.addEventListener('change', (e) => {
@@ -488,6 +527,15 @@ document.addEventListener('DOMContentLoaded', () => {
             btnResetLogo.style.display = 'none';
             logoInput.value = '';
             showToast('Restored Default Logo');
+        });
+
+        // Also allow clicking the default logo thumbnail to reset
+        const btnDefaultLogo = document.getElementById('btn-default-logo');
+        btnDefaultLogo?.addEventListener('click', () => {
+            previewLogo.src = 'assets/logo.png';
+            btnResetLogo.style.display = 'none';
+            logoInput.value = '';
+            showToast('Selected Default Logo');
         });
     }
 
@@ -541,8 +589,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const setAccentColor = (color) => {
         root.style.setProperty('--accent-color', color);
+        root.style.setProperty('--accent-blue', color);
         const rgb = hexToRgb(color);
-        if (rgb) root.style.setProperty('--accent-rgb', rgb);
+        if (rgb) {
+            root.style.setProperty('--accent-rgb', rgb);
+            root.style.setProperty('--accent-glow', `rgba(${rgb}, 0.4)`);
+        }
         localStorage.setItem('mu_accent_color', color);
 
         // Update dots UI
@@ -644,5 +696,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Final Init
     btnSavePreset?.addEventListener('click', savePreset);
     renderPresets();
-    setupLiveEditor();
 });

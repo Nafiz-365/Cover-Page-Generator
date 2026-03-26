@@ -1,0 +1,26 @@
+{
+  "name": "cover-page-generator",
+  "version": "1.0.0",
+  "description": "A professional, high-fidelity cover page generator for Metropolitan University students. Featuring real-time preview, dark mode, and high-quality PDF exports.",
+  "main": "script.js",
+  "scripts": {
+    "dev": "node server/server.js",
+    "start": "node server/server.js",
+    "test": "echo \"No tests\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nafiz-365/Cover-Page-Generator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nafiz-365/Cover-Page-Generator/issues"
+  },
+  "homepage": "https://github.com/Nafiz-365/Cover-Page-Generator#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "puppeteer": "^24.40.0"
+  }
+}
