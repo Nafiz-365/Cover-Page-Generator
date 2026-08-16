@@ -7,13 +7,15 @@ document.addEventListener('DOMContentLoaded', () => {
         studentSection: document.getElementById('input-student-section'),
         studentDept: document.getElementById('input-student-dept'),
         teacherName: document.getElementById('input-teacher-name'),
-        teacherDesignation: document.getElementById('input-teacher-designation'),
+        teacherDesignation: document.getElementById(
+            'input-teacher-designation',
+        ),
         teacherDept: document.getElementById('input-teacher-dept'),
         workTitle: document.getElementById('input-work-title'),
         courseName: document.getElementById('input-course-name'),
         courseCode: document.getElementById('input-course-code'),
         workNo: document.getElementById('input-work-no'),
-        submissionDate: document.getElementById('input-submission-date')
+        submissionDate: document.getElementById('input-submission-date'),
     };
 
     // Selectors - View Elements
@@ -29,21 +31,23 @@ document.addEventListener('DOMContentLoaded', () => {
         courseName: document.getElementById('view-course-name'),
         courseCode: document.getElementById('view-course-code'),
         workNo: document.getElementById('view-work-no'),
-        submissionDate: document.getElementById('view-submission-date')
+        submissionDate: document.getElementById('view-submission-date'),
     };
 
     // --- Pro Features: Progress & Persistence ---
     const progressBar = document.getElementById('progress-bar');
     const updateProgress = () => {
         const totalFields = Object.keys(inputs).length;
-        const filledFields = Object.values(inputs).filter(input => input.value.trim() !== '').length;
+        const filledFields = Object.values(inputs).filter(
+            (input) => input.value.trim() !== '',
+        ).length;
         const progress = (filledFields / totalFields) * 100;
         if (progressBar) progressBar.style.width = `${progress}%`;
     };
 
     const saveData = () => {
         const data = {};
-        Object.keys(inputs).forEach(key => {
+        Object.keys(inputs).forEach((key) => {
             data[key] = inputs[key].value;
         });
         localStorage.setItem('mu_cover_data', JSON.stringify(data));
@@ -56,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('mu_theme', theme);
         if (themeToggleInput) {
-            themeToggleInput.checked = (theme === 'light');
+            themeToggleInput.checked = theme === 'light';
         }
     };
 
@@ -72,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const saved = localStorage.getItem('mu_cover_data');
         if (saved) {
             const data = JSON.parse(saved);
-            Object.keys(data).forEach(key => {
+            Object.keys(data).forEach((key) => {
                 if (inputs[key]) {
                     inputs[key].value = data[key];
                     syncView(key, data[key]);
@@ -82,9 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-
-
-
     // --- Advanced Features: Subject Library ---
     const presetLibrary = document.getElementById('preset-library');
     const btnSavePreset = document.getElementById('btn-save-preset');
@@ -92,16 +93,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderPresets = () => {
         const presets = JSON.parse(localStorage.getItem('mu_presets') || '[]');
         if (presetLibrary) {
-            presetLibrary.innerHTML = presets.map(p => `
+            presetLibrary.innerHTML = presets
+                .map(
+                    (p) => `
                 <div class="preset-item" data-id="${p.id}" title="Click to load: ${p.name}">
                     ${p.name}
                     <span class="delete-preset" data-id="${p.id}" title="Delete Preset">
                         <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
                     </span>
                 </div>
-            `).join('');
+            `,
+                )
+                .join('');
 
-            presetLibrary.querySelectorAll('.preset-item').forEach(item => {
+            presetLibrary.querySelectorAll('.preset-item').forEach((item) => {
                 item.addEventListener('click', (e) => {
                     const deleteBtn = e.target.closest('.delete-preset');
                     if (deleteBtn) {
@@ -127,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
             courseCode: inputs.courseCode.value,
             teacherName: inputs.teacherName.value,
             teacherDesignation: inputs.teacherDesignation.value,
-            teacherDept: inputs.teacherDept.value
+            teacherDept: inputs.teacherDept.value,
         };
         const presets = JSON.parse(localStorage.getItem('mu_presets') || '[]');
         presets.push(preset);
@@ -138,9 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadPreset = (id) => {
         const presets = JSON.parse(localStorage.getItem('mu_presets') || '[]');
-        const preset = presets.find(p => p.id == id);
+        const preset = presets.find((p) => p.id == id);
         if (preset) {
-            Object.keys(preset).forEach(key => {
+            Object.keys(preset).forEach((key) => {
                 if (inputs[key]) {
                     inputs[key].value = preset[key];
                     syncView(key, preset[key]);
@@ -154,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const deletePreset = (id) => {
         let presets = JSON.parse(localStorage.getItem('mu_presets') || '[]');
-        presets = presets.filter(p => p.id != id);
+        presets = presets.filter((p) => p.id != id);
         localStorage.setItem('mu_presets', JSON.stringify(presets));
         renderPresets();
         showToast('Preset Deleted');
@@ -173,7 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Load saved template
-    const savedTemplate = localStorage.getItem('mu_template') || 'template-classic';
+    const savedTemplate =
+        localStorage.getItem('mu_template') || 'template-classic';
     if (selectTemplate) {
         selectTemplate.value = savedTemplate;
         setTemplate(savedTemplate);
@@ -184,7 +190,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const setFont = (fontClass) => {
         // Remove existing font classes
-        const fonts = ['font-classic', 'font-sans', 'font-modern', 'font-serif', 'font-mono'];
+        const fonts = [
+            'font-classic',
+            'font-sans',
+            'font-modern',
+            'font-serif',
+            'font-mono',
+        ];
         captureArea.classList.remove(...fonts);
 
         // Add new class
@@ -213,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Reset Form
     document.getElementById('btn-reset')?.addEventListener('click', () => {
         if (confirm('Are you sure you want to clear all data?')) {
-            Object.keys(inputs).forEach(key => {
+            Object.keys(inputs).forEach((key) => {
                 inputs[key].value = '';
                 syncView(key, '');
             });
@@ -276,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         if (key === 'studentDept') {
-            document.querySelectorAll('#view-student-dept').forEach(el => {
+            document.querySelectorAll('#view-student-dept').forEach((el) => {
                 updateElement(el, `Department of ${value || '...'}`);
             });
         } else if (key === 'teacherDept') {
@@ -285,14 +297,15 @@ document.addEventListener('DOMContentLoaded', () => {
             let fallback = '.........................';
             if (key === 'studentName') fallback = 'Student Name';
             else if (key === 'teacherName') fallback = "Teacher's Name";
-            else if (key === 'workTitle') fallback = '.........................';
+            else if (key === 'workTitle')
+                fallback = '.........................';
 
             updateElement(views[key], value || fallback);
         }
     };
 
     // Attach listeners
-    Object.keys(inputs).forEach(key => {
+    Object.keys(inputs).forEach((key) => {
         inputs[key].addEventListener('input', (e) => {
             syncView(key, e.target.value);
             saveData();
@@ -301,7 +314,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Special case for workNo because of innerHTML in updateMode
             if (key === 'workNo') {
                 const viewWorkNo = document.getElementById('view-work-no');
-                if (viewWorkNo) viewWorkNo.textContent = e.target.value || '...';
+                if (viewWorkNo)
+                    viewWorkNo.textContent = e.target.value || '...';
             }
         });
     });
@@ -337,11 +351,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const requiredFields = [
                 { id: 'input-student-name', name: 'Student Name' },
                 { id: 'input-work-title', name: 'Work Title' },
-                { id: 'input-student-id', name: 'Student ID' }
+                { id: 'input-student-id', name: 'Student ID' },
             ];
 
             let firstError = null;
-            requiredFields.forEach(field => {
+            requiredFields.forEach((field) => {
                 const el = document.getElementById(field.id);
                 if (!el || !el.value.trim()) {
                     el?.classList.add('error-shake');
@@ -373,7 +387,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     scrollY: 0,
                     // Use onclone to style the captured version perfectly
                     onclone: (clonedDoc) => {
-                        const clonedEl = clonedDoc.getElementById('capture-area');
+                        const clonedEl =
+                            clonedDoc.getElementById('capture-area');
                         clonedEl.style.boxShadow = 'none';
                         clonedEl.style.margin = '0';
                         clonedEl.style.padding = '25mm 20mm'; // Symmetrical margins
@@ -388,32 +403,38 @@ document.addEventListener('DOMContentLoaded', () => {
                         clonedDoc.body.style.margin = '0';
                         clonedDoc.body.style.padding = '0';
                         clonedDoc.body.style.overflow = 'hidden';
-                    }
+                    },
                 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
             };
 
             // Capture and save
-            html2pdf().set(opt).from(element).save().then(() => {
-                btnGenerate.disabled = false;
-                btnGenerate.style.opacity = '1';
-                btnGenerate.innerHTML = originalContent;
-                showToast('Cover Page Generated Successfully!');
+            html2pdf()
+                .set(opt)
+                .from(element)
+                .save()
+                .then(() => {
+                    btnGenerate.disabled = false;
+                    btnGenerate.style.opacity = '1';
+                    btnGenerate.innerHTML = originalContent;
+                    showToast('Cover Page Generated Successfully!');
 
-                // Celebration!
-                const primaryColor = localStorage.getItem('mu_accent_color') || '#4ecdc4';
-                confetti({
-                    particleCount: 150,
-                    spread: 70,
-                    origin: { y: 0.6 },
-                    colors: [primaryColor, '#ffffff', '#2563eb']
+                    // Celebration!
+                    const primaryColor =
+                        localStorage.getItem('mu_accent_color') || '#4ecdc4';
+                    confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: [primaryColor, '#ffffff', '#2563eb'],
+                    });
+                })
+                .catch((err) => {
+                    console.error('PDF Generation Error:', err);
+                    btnGenerate.disabled = false;
+                    btnGenerate.style.opacity = '1';
+                    btnGenerate.innerHTML = originalContent;
                 });
-            }).catch(err => {
-                console.error('PDF Generation Error:', err);
-                btnGenerate.disabled = false;
-                btnGenerate.style.opacity = '1';
-                btnGenerate.innerHTML = originalContent;
-            });
         });
     }
 
@@ -431,18 +452,21 @@ document.addEventListener('DOMContentLoaded', () => {
             'view-course-name': 'input-course-name',
             'view-course-code': 'input-course-code',
             'view-work-no': 'input-work-no',
-            'view-submission-date': 'input-submission-date'
+            'view-submission-date': 'input-submission-date',
         };
 
-        Object.keys(mapping).forEach(viewId => {
+        Object.keys(mapping).forEach((viewId) => {
             const elements = document.querySelectorAll(`#${viewId}`);
-            elements.forEach(el => {
+            elements.forEach((el) => {
                 el.addEventListener('click', () => {
                     const inputId = mapping[viewId];
                     const inputEl = document.getElementById(inputId);
                     if (inputEl) {
                         // Highlight and Focus
-                        inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        inputEl.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center',
+                        });
                         inputEl.focus();
                         inputEl.classList.remove('input-highlight');
                         void inputEl.offsetWidth; // Trigger reflow
@@ -456,11 +480,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- PWA: Service Worker Registration ---
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').then(reg => {
-                console.log('SW Registered');
-            }).catch(err => {
-                console.log('SW Registration failed', err);
-            });
+            navigator.serviceWorker
+                .register('./sw.js')
+                .then((reg) => {
+                    console.log('SW Registered');
+                })
+                .catch((err) => {
+                    console.log('SW Registration failed', err);
+                });
         });
     }
 
@@ -498,17 +525,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (menuBtn && mobileMenu) {
         // Toggle Menu Function
         const toggleMenu = (forceClose = false) => {
-            const isOpened = forceClose ? false : mobileMenu.classList.toggle('show-menu');
+            const isOpened = forceClose
+                ? false
+                : mobileMenu.classList.toggle('show-menu');
             if (forceClose) mobileMenu.classList.remove('show-menu');
 
             const iconPath = menuBtn.querySelector('path');
             if (isOpened) {
                 // Close (X) Icon
-                iconPath.setAttribute('d', 'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z');
+                iconPath.setAttribute(
+                    'd',
+                    'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z',
+                );
                 menuBtn.setAttribute('aria-label', 'Close Menu');
             } else {
                 // Menu (Bars) Icon
-                iconPath.setAttribute('d', 'M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z');
+                iconPath.setAttribute(
+                    'd',
+                    'M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z',
+                );
                 menuBtn.setAttribute('aria-label', 'Open Menu');
             }
         };
@@ -520,9 +555,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Close when clicking outside
         document.addEventListener('click', (e) => {
-            if (mobileMenu.classList.contains('show-menu') &&
+            if (
+                mobileMenu.classList.contains('show-menu') &&
                 !mobileMenu.contains(e.target) &&
-                !menuBtn.contains(e.target)) {
+                !menuBtn.contains(e.target)
+            ) {
                 toggleMenu(true); // Force close
             }
         });
@@ -535,8 +572,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const hexToRgb = (hex) => {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ?
-            `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : null;
+        return result
+            ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+            : null;
     };
 
     const setAccentColor = (color) => {
@@ -546,18 +584,20 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('mu_accent_color', color);
 
         // Update dots UI
-        colorDots.forEach(dot => {
+        colorDots.forEach((dot) => {
             if (dot.dataset.color === color) dot.classList.add('active');
             else dot.classList.remove('active');
         });
         if (customColorInput) customColorInput.value = color;
     };
 
-    colorDots.forEach(dot => {
+    colorDots.forEach((dot) => {
         dot.addEventListener('click', () => setAccentColor(dot.dataset.color));
     });
 
-    customColorInput?.addEventListener('input', (e) => setAccentColor(e.target.value));
+    customColorInput?.addEventListener('input', (e) =>
+        setAccentColor(e.target.value),
+    );
 
     // Load saved accent
     const savedAccent = localStorage.getItem('mu_accent_color') || '#4ecdc4';
@@ -565,15 +605,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Advanced UX: Smart Input Intelligence ---
     const toTitleCase = (str) => {
-        return str.replace(/\b\w/g, l => l.toUpperCase());
+        return str.replace(/\b\w/g, (l) => l.toUpperCase());
     };
 
     const kebabToCamel = (str) => {
-        return str.replace(/-([a-z])/g, g => g[1].toUpperCase());
+        return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
     };
 
-    const smartInputs = ['input-student-name', 'input-teacher-name', 'input-work-title', 'input-course-name'];
-    smartInputs.forEach(id => {
+    const smartInputs = [
+        'input-student-name',
+        'input-teacher-name',
+        'input-work-title',
+        'input-course-name',
+    ];
+    smartInputs.forEach((id) => {
         const el = document.getElementById(id);
         el?.addEventListener('blur', (e) => {
             const val = e.target.value;
@@ -595,7 +640,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     courseCodeInput?.addEventListener('blur', () => {
         const code = courseCodeInput.value.toUpperCase().trim();
-        const memory = JSON.parse(localStorage.getItem('mu_course_memory') || '{}');
+        const memory = JSON.parse(
+            localStorage.getItem('mu_course_memory') || '{}',
+        );
         if (code && memory[code] && !courseNameInput.value) {
             courseNameInput.value = memory[code];
             syncView('courseName', memory[code]);
@@ -607,7 +654,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const code = courseCodeInput.value.toUpperCase().trim();
         const name = courseNameInput.value.trim();
         if (code && name) {
-            const memory = JSON.parse(localStorage.getItem('mu_course_memory') || '{}');
+            const memory = JSON.parse(
+                localStorage.getItem('mu_course_memory') || '{}',
+            );
             memory[code] = name;
             localStorage.setItem('mu_course_memory', JSON.stringify(memory));
         }
@@ -617,8 +666,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewContainer = document.getElementById('capture-area');
     if (previewContainer) {
         // Add visual hint (tooltips)
-        const editableElements = previewContainer.querySelectorAll('[id^="view-"]');
-        editableElements.forEach(el => {
+        const editableElements =
+            previewContainer.querySelectorAll('[id^="view-"]');
+        editableElements.forEach((el) => {
             el.setAttribute('title', 'Click to edit in sidebar');
             el.classList.add('clickable-view');
         });
@@ -632,10 +682,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const inputEl = document.getElementById(inputId);
 
                 if (inputEl) {
-                    inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    inputEl.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                    });
                     inputEl.focus();
                     inputEl.classList.add('input-highlight');
-                    setTimeout(() => inputEl.classList.remove('input-highlight'), 1500);
+                    setTimeout(
+                        () => inputEl.classList.remove('input-highlight'),
+                        1500,
+                    );
                 }
             }
         });
